@@ -3,10 +3,11 @@
 
 SPLAT_FORM_URL = "http://www.cv.nrao.edu/php/splat/c_export.php"
 HIT_LIMIT = 2000
+SPLATALOGUE_TIMEOUT = 30
 
 """
 NB this script has a export limit of 2000 hits.
-Chaning HIT_LIMIT will change this.
+Change HIT_LIMIT to accomodate your needs.
 """
 
 __all__ = ['search']
@@ -20,20 +21,6 @@ except (ImportError):
 
 import numpy as _np
 
-
-
-SPLAT_SEARCH_QUERY = ('submit=Search&chemical_name=&calcIn=&data_version=v2.0&'
-    'from=203.4&to=203.42&frequency_units=GHz&energy_range_from=&energy_range_'
-    'to=&energy_range_type=eu_k&tran=&no_atmospheric=no_atmospheric&no_potenti'
-    'al=no_potential&no_probable=no_probable&displayLovas=displayLovas&display'
-    'SLAIM=displaySLAIM&displayJPL=displayJPL&displayCDMS=displayCDMS&displayT'
-    'oyaMA=displayToyaMA&displayOSU=displayOSU&displayRecomb=displayRecomb&dis'
-    'playLisa=displayLisa&displayRFI=displayRFI&ls1=ls1&ls2=ls2&ls3=ls3&ls4=ls'
-    '4&ls5=ls5&el1=el1&el2=el2&el3=el3&el4=el4&show_unres_qn=show_unres_qn&sho'
-    'w_upper_degeneracy=show_upper_degeneracy&show_molecule_tag=show_molecule_'
-    'tag&show_qn_code=show_qn_code&export_type=current&export_delimiter=colon&'
-    'offset=0&limit=1000&range=on&submit=Export')
-
 """
 
 TODO : improve the parsing of the astropy.table output
@@ -42,143 +29,6 @@ TODO : be able to search on molecule
 TODO : add help docs
 TODO : clean up the QN strings in the results
 
-"""
-
-"""
-
-sid[]=
-
-#  Energy level display (triggered)
-# 1 : Elower (cm-1)
-# 2 : Elower (K)
-# 3 : Eupper (cm-1)
-# 4 : Eupper (K)
-el1=el1
-el2=el2
-el3=el3
-el4=el4
-
-# Line strength display (triggered)
-# 1 : CDMS/JPL Intensity
-# 2 : Sij mu2
-# 3 : Sij
-# 4 : Aij
-# 5 : Lovas/AST
-ls1=ls1
-ls2=ls2
-ls3=ls3
-ls4=ls4
-ls5=ls5
-
-# line list (triggered)
-# def all on
-displayRecomb=displayRecomb 
-displayLovas=displayLovas
-displaySLAIM=displaySLAIM
-displayJPL=displayJPL
-displayCDMS=displayCDMS
-displayToyaMA=displayToyaMA
-displayOSU=displayOSU
-displayLisa=displayLisa
-displayRFI=displayRFI
-
-
-# data versions (choose)
-# def v2.0
-data_version=v2.0
-or
-data_version=v1.0
-or
-data_version=vall
-
-# Exclude atmospheric species (triggered)
-# def on
-no_atmospheric=no_atmospheric
-
-# Exclude potential interstellar species (triggered)
-# def on
-no_potential=no_potential
-
-# Exclude probable interstellar species (triggered)
-# def on
-no_probable=no_probable
-
-# Exclude known AST species (triggered)
-# def off
-known=known
-
-# Show ONLY NRAO Recommended Freq (triggered)
-# def off
-include_only_nrao=include_only_nrao
-
-# Display Unresolved quantum numbers (triggered)
-# def on
-show_unres_qn=show_unres_qn
-
-# Show upper degeneracy (triggered)
-# def on
-show_upper_degeneracy=show_upper_degeneracy
-
-# Display Molecule Tag (triggered)
-# def on
-show_molecule_tag=show_molecule_tag
-
-# No HFS Display (triggered)
-noHFS=noHFS
-
-# Display HFS Intensity (triggered)
-displayHFS=displayHFS
-
-# Display Quantum Number Code (triggered)
-show_qn_code=show_qn_code
-
-# Display Lab Ref (triggered)
-show_lovas_labref=show_lovas_labref
-
-# Display Obs Ref (triggered)
-show_lovas_obsref=show_lovas_obsref
-
-# Display Ordered Frequency ONLY (triggered)
-show_orderedfreq_only=show_orderedfreq_only
-
-# Display NRAO Recommended Frequencies (triggered)
-show_nrao_recommended=show_nrao_recommended
-
-
-# transition (triggered)
-tran=1-0
-
-# frequency
-from=31
-to=31
-frequency_units=GHz
-or 
-frequency_units=MHz
-
-# line intensity lower limit (triggered)
-lill_cdms_jpl=-5
-or
-lill_sijmu2
-or
-lill_aij
-
-
-# Energy range (triggered)
-# but if one exists, the energy_range_type must exist
-energy_range_from=10
-energy_range_to=500
-energy_range_type=eu_k
- or
-energy_range_type=el_k
-or
-energy_range_type=el_cm1
-or
-energy_range_type=eu_cm1
-
-
-
-
-submit=1
 """
 
 #~ The urllib2 module has been split across several modules in Python 3.0
@@ -643,7 +493,7 @@ def _get_results(parameters):
     path = SPLAT_FORM_URL  
     req = Request(path, parameters)
     req.add_header("Content-type", "application/x-www-form-urlencoded")
-    results = urlopen(req).read()
+    results = urlopen(req, timeout=SPLATALOGUE_TIMEOUT).read()
     return results
 
 def _parse_results(data, output='astropy.table'):
@@ -806,3 +656,140 @@ def _parse_results(data, output='astropy.table'):
         print('Nothing else than astropy.table output is implemented atm')
         return results
 
+
+"""
+
+sid[]=
+
+#  Energy level display (triggered)
+# 1 : Elower (cm-1)
+# 2 : Elower (K)
+# 3 : Eupper (cm-1)
+# 4 : Eupper (K)
+el1=el1
+el2=el2
+el3=el3
+el4=el4
+
+# Line strength display (triggered)
+# 1 : CDMS/JPL Intensity
+# 2 : Sij mu2
+# 3 : Sij
+# 4 : Aij
+# 5 : Lovas/AST
+ls1=ls1
+ls2=ls2
+ls3=ls3
+ls4=ls4
+ls5=ls5
+
+# line list (triggered)
+# def all on
+displayRecomb=displayRecomb 
+displayLovas=displayLovas
+displaySLAIM=displaySLAIM
+displayJPL=displayJPL
+displayCDMS=displayCDMS
+displayToyaMA=displayToyaMA
+displayOSU=displayOSU
+displayLisa=displayLisa
+displayRFI=displayRFI
+
+
+# data versions (choose)
+# def v2.0
+data_version=v2.0
+or
+data_version=v1.0
+or
+data_version=vall
+
+# Exclude atmospheric species (triggered)
+# def on
+no_atmospheric=no_atmospheric
+
+# Exclude potential interstellar species (triggered)
+# def on
+no_potential=no_potential
+
+# Exclude probable interstellar species (triggered)
+# def on
+no_probable=no_probable
+
+# Exclude known AST species (triggered)
+# def off
+known=known
+
+# Show ONLY NRAO Recommended Freq (triggered)
+# def off
+include_only_nrao=include_only_nrao
+
+# Display Unresolved quantum numbers (triggered)
+# def on
+show_unres_qn=show_unres_qn
+
+# Show upper degeneracy (triggered)
+# def on
+show_upper_degeneracy=show_upper_degeneracy
+
+# Display Molecule Tag (triggered)
+# def on
+show_molecule_tag=show_molecule_tag
+
+# No HFS Display (triggered)
+noHFS=noHFS
+
+# Display HFS Intensity (triggered)
+displayHFS=displayHFS
+
+# Display Quantum Number Code (triggered)
+show_qn_code=show_qn_code
+
+# Display Lab Ref (triggered)
+show_lovas_labref=show_lovas_labref
+
+# Display Obs Ref (triggered)
+show_lovas_obsref=show_lovas_obsref
+
+# Display Ordered Frequency ONLY (triggered)
+show_orderedfreq_only=show_orderedfreq_only
+
+# Display NRAO Recommended Frequencies (triggered)
+show_nrao_recommended=show_nrao_recommended
+
+
+# transition (triggered)
+tran=1-0
+
+# frequency
+from=31
+to=31
+frequency_units=GHz
+or 
+frequency_units=MHz
+
+# line intensity lower limit (triggered)
+lill_cdms_jpl=-5
+or
+lill_sijmu2
+or
+lill_aij
+
+
+# Energy range (triggered)
+# but if one exists, the energy_range_type must exist
+energy_range_from=10
+energy_range_to=500
+energy_range_type=eu_k
+ or
+energy_range_type=el_k
+or
+energy_range_type=el_cm1
+or
+energy_range_type=eu_cm1
+
+
+
+
+submit=1
+"""
