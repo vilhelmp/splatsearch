@@ -38,23 +38,6 @@ SPLAT_SEARCH_QUERY = ('submit=submit&chemical_name=&calcIn=&data_version=v2.0&'
     'tag&show_qn_code=show_qn_code&export_type=current&export_delimiter=colon&'
     'offset=0&limit=69&range=on&submit=Export')
 
-# everything selected and added
-"""
-
-show_unres_qn=show_unres_qn
-show_upper_degeneracy=show_upper_degeneracy
-show_molecule_tag=show_molecule_tag
-noHFS=noHFS
-show_qn_code=show_qn_code
-show_lovas_labref=show_lovas_labref
-show_lovas_obsref=show_lovas_obsref
-show_orderedfreq_only=show_orderedfreq_only
-show_nrao_recommended=show_nrao_recommended
-
-submit=1
-"""
-
-# "standard"
 """
 sid[]=
 
@@ -81,6 +64,7 @@ ls4=ls4
 ls5=ls5
 
 # line list (triggered)
+# def all on
 displayRecomb=displayRecomb 
 displayLovas=displayLovas
 displaySLAIM=displaySLAIM
@@ -93,6 +77,7 @@ displayRFI=displayRFI
 
 
 # data versions (choose)
+# def v2.0
 data_version=v2.0
 or
 data_version=v1.0
@@ -100,40 +85,57 @@ or
 data_version=vall
 
 # Exclude atmospheric species (triggered)
+# def on
 no_atmospheric=no_atmospheric
 
 # Exclude potential interstellar species (triggered)
+# def on
 no_potential=no_potential
 
 # Exclude probable interstellar species (triggered)
+# def on
 no_probable=no_probable
 
 # Exclude known AST species (triggered)
+# def off
 known=known
 
 # Show ONLY NRAO Recommended Freq (triggered)
+# def off
 include_only_nrao=include_only_nrao
 
-# Display Unresolved quantum numbers
+# Display Unresolved quantum numbers (triggered)
+# def on
 show_unres_qn=show_unres_qn
 
-# Show upper degeneracy
+# Show upper degeneracy (triggered)
+# def on
 show_upper_degeneracy=show_upper_degeneracy
 
+# Display Molecule Tag (triggered)
+# def on
 show_molecule_tag=show_molecule_tag
 
+# No HFS Display (triggered)
 noHFS=noHFS
 
+# Display HFS Intensity (triggered)
+displayHFS=displayHFS
+
+# Display Quantum Number Code (triggered)
 show_qn_code=show_qn_code
 
+# Display Lab Ref (triggered)
 show_lovas_labref=show_lovas_labref
 
+# Display Obs Ref (triggered)
 show_lovas_obsref=show_lovas_obsref
 
+# Display Ordered Frequency ONLY (triggered)
 show_orderedfreq_only=show_orderedfreq_only
 
+# Display NRAO Recommended Frequencies (triggered)
 show_nrao_recommended=show_nrao_recommended
-
 
 
 # transition (triggered)
