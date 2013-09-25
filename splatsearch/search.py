@@ -265,8 +265,8 @@ def search( freq = [203.4, 203.42],
             parameters.extend( _parse_lill( lill ) )
         
         parameters.extend( _parameters_ending() )
-        return parameters
         results = _get_results(parameters)
+        return results
         results = _parse_results(results)
 
         return results # temporary
@@ -369,7 +369,7 @@ def _parameters_preamble():
         ('show_qn_code', 'show_qn_code'),
         #('show_lovas_labref', 'how_lovas_labref'),          # Always OFF
         #('show_lovas_obsref', 'show_lovas_obsref'),         # Always OFF
-        ('show_orderedfreq_only', 'show_orderedfreq_only'),
+        #~ ('show_orderedfreq_only', 'show_orderedfreq_only'),
         ('show_nrao_recommended', 'show_nrao_recommended')
         ]
     return returnlist
@@ -503,6 +503,13 @@ def _parse_settings( settings ):
     default = 0
     returnlist.append( _set_bool(settings, key, param, default) )
 
+    # stupid(!) hack to remove empty entries, need to just not add them...
+    while 1:
+        try:
+            returnlist.remove(())
+        except (ValueError):
+            break
+    
     return returnlist
 
 def _parse_frequency(freq, fwidth, funit):
@@ -643,12 +650,12 @@ def _get_results(parameters):
     
     parameters = urlencode(parameters)
     path = SPLAT_FORM_URL  
-    req = Request(path, mydata)
+    req = Request(path, parameters)
     req.add_header("Content-type", "application/x-www-form-urlencoded")
     results = urlopen(req).read()
     return results
 
-def _parse_result(data, output='astropy.table'):
+def _parse_results(data, output='astropy.table'):
     """
     Only one output type at the moment    
     """
@@ -662,8 +669,8 @@ def _parse_result(data, output='astropy.table'):
         # get the names of the columns
         column_names = rows[0]
         column_names = column_names.split(':')
-        
-        for i in np.arange(len(column_names)):
+        # clean them up a bit
+        for i in _np.arange(len(column_names)):
             column_names[i] = column_names[i].replace('<br>', ' ')
             column_names[i] = column_names[i].replace('<sub>', '_')
             column_names[i] = column_names[i].replace('<sup>', '^')
@@ -671,12 +678,38 @@ def _parse_result(data, output='astropy.table'):
             column_names[i] = column_names[i].replace('</sub>', '')
             column_names[i] = column_names[i].replace('&#956;', 'mu')
             column_names[i] = column_names[i].replace('sid[0] is null', '')
+        """
+        Column Names should now be:
+            ['Species',
+             'NRAO Recommended',
+             'Chemical Name',
+             'Freq-GHz',
+             'Freq Err',
+             'Meas Freq-GHz',
+             'Meas Freq Err',
+             'Resolved QNs',
+             'Unresolved Quantum Numbers',
+             'CDMS/JPL Intensity',
+             'S_ijmu^2 (D^2)',
+             'S_ij',
+             'Log_10 (A_ij)',
+             'Lovas/AST Intensity',
+             'E_L (cm^-1)',
+             'E_L (K)',
+             'E_U (cm^-1)',
+             'E_U (K)',
+             'HFS int',
+             'Upper State Degeneracy',
+             'Molecule Tag',
+             'Quantum Number Code',
+             'Linelist']
+        """
         rows = rows[1:-1]
         rows = [i.split(':') for i in rows]
         rows = _np.array(rows)
         rows[rows == ''] = 'nan'
         
-        column_dtypes = ['str', 'str', 'float', 'float', 'float' , 'float' ,
+        column_dtypes = ['str', 'str', 'str', 'float', 'float', 'float' , 'float' ,
                         'str', 'str', 'float',
                         'float', 'float', 'float', 'str', 'float', 'float',
                         'float', 'float', 'float', 'float','float','str']
