@@ -24,10 +24,27 @@ import numpy as _np
 """
 
 TODO : improve the parsing of the astropy.table output
-TODO : create pretty printing for on screen results in separate file
-TODO : be able to search on molecule
+
+TODO : get partition values/function for certain molecule?
+
+TODO : simple escape probability calculation for transitions
+        of molecule to estimate strengths?
+
+TODO : be able to search on molecular species
+        either just parse the output (grep type)
+                          or
+        actually search for specific molecule (sid[])
+
+TODO : create pretty printing for on screen results
+        in the bin directory
+
+
 TODO : add help docs
+        explain how to use it
+
+        
 TODO : clean up the QN strings in the results
+
 
 """
 
