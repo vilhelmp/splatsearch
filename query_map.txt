@@ -1,0 +1,39 @@
+
+ALWAYS ON-----------------------------------
+Display HFS Intensity  
+Display Unresolved Quantum Numbers  
+Display Upper State Degeneracy 
+Display Molecule Tag  
+Display Quantum Number Code  
+Display NRAO Recommended Frequencies
+E_levels (all)
+Line Strength Display (all)
+Display Ordered Frequency ONLY (only one frequency to parse)
+
+ALWAYS OFF-----------------------------------
+Display Lab Ref  
+Display Obs Ref
+
+
+IF INPUT-------------------------------------
+transition				(None)
+lill					(None)
+e_range					(None)
+linelist				(all)
+frequency_unit				(GHz)
+
+version					(v2.0)
+frequency_error_limit			(off)
+Exclude atmospheric species 		(on)
+Show ONLY NRAO Recommended Freq 	(off)
+Exclude potential interstellar species  (on)
+Exclude probable interstellar species 	(on)
+Exclude known AST species  		(off)
+
+
+ALWAYS INPUT----------------------------------
+frequency
+
+
+
+
