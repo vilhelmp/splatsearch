@@ -1,5 +1,3 @@
-# Licensed under a 3-clause BSD style license - see LICENSE.rst
-
 
 SPLAT_FORM_URL = "http://www.cv.nrao.edu/php/splat/c_export.php"
 HIT_LIMIT = 2000
