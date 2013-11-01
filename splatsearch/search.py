@@ -120,11 +120,11 @@ def search( freq = [203.4, 203.42],
         
         parameters.extend( _parameters_ending() )
         results = _get_results(parameters)
-
+        
         if settings.has_key('otype'):
-            results = _parse_results(results, settings['otype'])
+            results = _parse_results(results, output=settings['otype'])
         else:
-            results = _parse_results(results, 'astropy.table')
+            results = _parse_results(results, output='astropy.table')
         return results
         
 def _parameters_preamble():
@@ -511,23 +511,14 @@ def _get_results(parameters):
     results = urlopen(req, timeout=SPLATALOGUE_TIMEOUT).read()
     return results
 
-def _parse_results(data, output='astropy.table'):
-    """
-    Only one output type at the moment, the astropy.table table
-    
-    """
-    #TODO : what if results are empty
-    if output == 'astropy.table':
-        if not use_astropy:
-            #~ print('Astropy not installed, try other output format')
-            raise(ImportError('Astropy not installed, try other output format'))
+def _parse_data(data):
         # get each line (i.e. each molecule)
         rows = data.split('\n')
         # get the names of the columns
         column_names = rows[0]
         column_names = column_names.split(':')
         # clean them up a bit
-        for i in _np.arange(len(column_names)):
+        for i in _np.arange( len(column_names) ):
             column_names[i] = column_names[i].replace('<br>', ' ')
             column_names[i] = column_names[i].replace('<sub>', '_')
             column_names[i] = column_names[i].replace('<sup>', '^')
@@ -563,12 +554,12 @@ def _parse_results(data, output='astropy.table'):
              'Linelist']
         """
         rows = rows[1:-1]
+        if rows == []:
+            return [column_names]
         rows = [i.split(':') for i in rows]
         rows = _np.array(rows)
         rows[rows == ''] = -999999
-        #~ print column_names
-        #~ return rows
-        column_dtypes = ['str',        # 'Species',
+        column_dtypes = ['str',       # 'Species',
                         'str',        # 'NRAO Recommended',
                         'str',        # 'Chemical Name',
                         'float',      # 'Freq-GHz',
@@ -621,7 +612,6 @@ def _parse_results(data, output='astropy.table'):
         column_names_original = column_names[:]
 
         #~ column_names = [i.lower() for i in column_names]
-
         #~ for i in _np.arange(len(column_names)):
             #~ column_names[i] = column_names[i].replace('nrao recommended', 'nrao_rec')
             #~ column_names[i] = column_names[i].replace('chemical name', 'name')
@@ -659,16 +649,36 @@ def _parse_results(data, output='astropy.table'):
                  'tag',
                  'qncode',
                  'list']
-        results = Table(data = rows , 
-                        names = column_names, 
-                        dtypes = column_dtypes)
-
+        return (rows, column_names, column_dtypes, column_units)
         
-        for i in _np.arange(len(column_units)):
-            results.field(i).units = column_units[i]
-        return results
+def _create_astrotable(rows, column_names, column_dtypes, column_units):
+    results = Table(data = rows , 
+                    names = column_names, 
+                    dtypes = column_dtypes)
+    for i in _np.arange(len(column_units)):
+        results.field(i).units = column_units[i]
+    return results
+    
+def _parse_results(data, output='astropy.table'):
+    """
+    Only one output type at the moment, the astropy.table table
+    
+    """
+    results = _parse_data(data)
+    if len(results) == 1:
+        print 'No hits.'
+        # just return the column names
+        return results[0]
+    #TODO : what if results are empty
+    if output == 'astropy.table':
+        if not use_astropy:
+            raise(ImportError('Astropy not installed, try other output format'))
+        else:
+            return _create_astrotable( *results )
+    #~ elif output == 'list':
+        # return list of frequencies and species
     else:
-        print('Nothing else than astropy.table output is implemented atm')
+        print('Other outputs not implementet yet.')
         return results
 
 
