@@ -559,9 +559,22 @@ def _parse_data(data):
         rows = [i.split(':') for i in rows]
         rows = _np.array(rows)
         rows[rows == ''] = -999999
+        # get Ofreq, replace '' with Mfreq
+        # [22, 34, 59]
+        freq = rows[:,3].copy() # observed
+        ferr = rows[:,4].copy()
+        mfreq = rows[:,5].copy() # measured
+        mferr = rows[:,6].copy()
+        freq[ freq=='-999999' ] = mfreq[ freq=='-999999' ]
+        ferr[ freq=='-999999' ] = mferr[ freq=='-999999' ]
+        t = [_np.insert(i, 3, j) for i,j in zip(rows,ferr)]
+        rows = _np.array([_np.insert(i, 3, j) for i,j in zip(t,freq)])
+        #
         column_dtypes = ['str',       # 'Species',
                         'str',        # 'NRAO Recommended',
                         'str',        # 'Chemical Name',
+                        'float',      # 'Freq-GHz',
+                        'float',      # 'Freq Err',
                         'float',      # 'Freq-GHz',
                         'float',      # 'Freq Err',
                         'float',      # 'Meas Freq-GHz',
@@ -588,6 +601,8 @@ def _parse_data(data):
         column_units = [None,           # 'Species',
                         None,           # 'NRAO Recommended',
                         None,           # 'Chemical Name',
+                        funit,          # Frequency, Of, but Mf if no Of
+                        funit,          # Frequency err, Of, but Mf if no Of
                         funit,          # 'Freq-GHz',
                         funit,          # 'Freq Err',
                         funit,          # 'Meas Freq-GHz',
@@ -629,6 +644,10 @@ def _parse_data(data):
         column_names = ['species',
                  'nrao_rec',
                  'name',
+
+                 'freq',
+                 'ferr',
+                 
                  'ofreq',
                  'oferr',
                  'mfreq',
@@ -665,6 +684,7 @@ def _parse_results(data, output='astropy.table'):
     
     """
     results = _parse_data(data)
+    return results
     if len(results) == 1:
         print 'No hits.'
         # just return the column names
