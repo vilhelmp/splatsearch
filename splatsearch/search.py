@@ -684,11 +684,11 @@ def _parse_results(data, output='astropy.table'):
     
     """
     results = _parse_data(data)
-    return results
+    #~ return results
     if len(results) == 1:
         print 'No hits.'
         # just return the column names
-        return results[0]
+        return [None, results[0]]
     #TODO : what if results are empty
     if output == 'astropy.table':
         if not use_astropy:
